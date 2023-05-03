@@ -21,4 +21,10 @@ export class ProductsService {
     db.products.splice(index, 1);
     return `Product with id ${id} has been deleted`;
   }
+
+  public create(productData: Omit<Product, 'id'>): Product {
+    const newProduct = { ...productData, id: uuidv4() };
+    db.products.push(newProduct);
+    return newProduct;
+  }
 }
