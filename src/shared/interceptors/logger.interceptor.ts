@@ -11,7 +11,11 @@ import { tap } from 'rxjs/operators';
 export class LoggerInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     console.log('***');
-    console.log(`Start request in ${context.getClass().name}`);
+    console.log(
+      `Start ${context.getArgs()[0].method} request to ${
+        context.getArgs()[0].url
+      } in ${context.getClass().name}`,
+    );
 
     const start = Date.now();
 
