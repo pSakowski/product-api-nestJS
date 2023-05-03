@@ -29,5 +29,11 @@ export const db: DBData = {
       price: 8000,
       description: 'Small camera with big features',
     },
+    {
+      id: '1',
+      name: 'TEST',
+      price: 1111,
+      description: 'TEST',
+    },
   ],
 };
