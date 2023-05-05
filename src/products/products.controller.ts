@@ -30,17 +30,18 @@ export class ProductsController {
   }
 
   @Delete('/:id')
-  deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
-    const product = this.productsService.deleteById(id);
+  async deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const product = await this.productsService.getById(id);
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-    return { success: true };
+    await this.productsService.deleteById(id);
+    return { message: `Product with id ${id} has been deleted` };
   }
 
   @Post('/')
-  create(@Body() productData: CreateProductDTO) {
-    const newProduct = this.productsService.create(productData);
+  async create(@Body() productData: CreateProductDTO) {
+    const newProduct = await this.productsService.create(productData);
     return {
       message: 'Product created successfully',
       data: newProduct,
@@ -56,6 +57,6 @@ export class ProductsController {
       throw new NotFoundException('Product not found');
 
     await this.productsService.updateById(id, productData);
-    return { success: true };
+    return { message: `Product with id ${id} has been updated` };
   }
 }
