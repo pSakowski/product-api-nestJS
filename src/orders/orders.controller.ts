@@ -9,7 +9,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { Order } from 'src/db';
 import { CreateOrderDTO } from './dtos/create-order.dto';
 import { ParseUUIDPipe } from '@nestjs/common';
 import { UpdateOrderDTO } from './dtos/update-order.dto';
@@ -17,32 +16,32 @@ import { UpdateOrderDTO } from './dtos/update-order.dto';
 @Controller('orders')
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
-  @Get()
-  getAll(): Order[] {
+
+  @Get('/')
+  async getAll() {
     return this.ordersService.getAll();
   }
 
   @Get('/:id')
-  getById(@Param('id', new ParseUUIDPipe()) id: string) {
-    const order = this.ordersService.getById(id);
-    if (!order) {
-      throw new NotFoundException('Order not found');
-    }
+  async getById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const order = await this.ordersService.getById(id);
+    if (!order) throw new NotFoundException('Order not found');
     return order;
   }
 
   @Delete('/:id')
-  deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
-    const order = this.ordersService.deleteById(id);
+  async deleteById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const order = await this.ordersService.getById(id);
     if (!order) {
       throw new NotFoundException('Order not found');
     }
-    return { success: true };
+    await this.ordersService.deleteById(id);
+    return { message: `Order with id ${id} has been deleted` };
   }
 
   @Post('/')
-  create(@Body() orderData: CreateOrderDTO) {
-    const newOrder = this.ordersService.create(orderData);
+  async create(@Body() orderData: CreateOrderDTO) {
+    const newOrder = await this.ordersService.create(orderData);
     return {
       message: 'Order created successfully',
       data: newOrder,
@@ -50,14 +49,14 @@ export class OrdersController {
   }
 
   @Put('/:id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() orderData: UpdateOrderDTO,
   ) {
-    if (!this.ordersService.getById(id))
+    if (!(await this.ordersService.getById(id)))
       throw new NotFoundException('Order not found');
 
-    this.ordersService.updateById(id, orderData);
-    return { success: true };
+    await this.ordersService.updateById(id, orderData);
+    return { message: `Order with id ${id} has been updated` };
   }
 }
