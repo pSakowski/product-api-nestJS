@@ -18,14 +18,18 @@ model Product {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  orders      Order[]
 }
 
 model Order {
   id          String   @id @default(uuid())
-  productId   String
   client      String
   address     String
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  product     Product @relation(fields: [productId], references: [id])
+  productId   String
 }
