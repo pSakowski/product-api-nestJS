@@ -12,7 +12,6 @@ export class CreateProductDTO {
   @Min(0)
   price: number;
 
-  @IsNotEmpty()
-  @Transform(({ value }) => (Array.isArray(value) ? value.join(', ') : ''))
+  // @Transform(({ value }) => (Array.isArray(value) ? value.join(', ') : ''))
   description: string;
 }
